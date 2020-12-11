@@ -15,7 +15,7 @@ if __name__ == '__main__':
     counter = 0
     for i, filename in enumerate(os.listdir(src)):
         sp = filename.split('_')
-        if sp[1] == 'sat.jpg':
+        if sp[1] == '1_sat.jpg':
             sat = os.path.join(src, filename)
             mask = os.path.join(src, sp[0] + '_mask.png')
 

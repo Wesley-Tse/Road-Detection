@@ -22,10 +22,10 @@ if __name__ == '__main__':
         print('{} / {} ------{}'.format(n, count, filename))
         info = filename.split('_')[1]
         img = cv2.imread(os.path.join(src, filename), 1)
-        if info == 'sat.jpg':
+        if info == '1_sat.jpg':
             cv2.imwrite(os.path.join(img_path, str(i) + '_' + info), img)
             i += 1
-        if info == 'mask.png':
+        if info == '1_mask.png':
             cv2.imwrite(os.path.join(mask_path, str(j) + '_' + info), img)
             j += 1
     print('done!')

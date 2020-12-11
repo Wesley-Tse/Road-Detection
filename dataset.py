@@ -5,28 +5,26 @@
 
 import os
 import cv2
+import numpy as np
 from torchvision import transforms
 from torch.utils.data import Dataset
 
-data_dir = r'E:\PyCharmProject\datasets\4'
-label_dir = './datasets/label'
-
-
 class MyDataset(Dataset):
 
-    def __init__(self):
+    def __init__(self, img_path, mask_path):
         super().__init__()
-
+        self.img_path = img_path
+        self.mask_path = mask_path
         self.filename = []
-        for name in os.listdir(data_dir):
-            self.filename.append(name)
+        for name in os.listdir(img_path):
+            self.filename.append(name.split('.')[0])
 
     def __getitem__(self, index):
         transform = transforms.Compose([
             transforms.ToTensor()
         ])
-        image = transform(cv2.imread(os.path.join(data_dir, self.filename[index]), 0))
-        mask = transform(cv2.imread(os.path.join(label_dir, self.filename[index]), 0))
+        image = transform(cv2.imread(os.path.join(self.img_path, self.filename[index] + '.jpg'), 0))
+        mask = transform(cv2.imread(os.path.join(self.mask_path, self.filename[index] + '.png'), 0))
 
         return image, mask
 
@@ -35,7 +33,9 @@ class MyDataset(Dataset):
 
 
 if __name__ == '__main__':
-    dataset = MyDataset()
+    img_path = r'E:\PyCharmProject\datasets\patch\image'
+    mask_path = r'E:\PyCharmProject\datasets\patch\mask'
+    dataset = MyDataset(img_path, mask_path)
     for img, mask in dataset:
 
         print('img', img.shape)
