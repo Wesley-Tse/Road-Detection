@@ -100,6 +100,7 @@ class UNet(nn.Module):
 
         y6 = self.up1(y5, y4)
         y7 = self.up2(y6, y3)
+
         y8 = self.up3(y7, y2)
         y9 = self.up4(y8, y1)
 
