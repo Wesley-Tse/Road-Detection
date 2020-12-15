@@ -27,9 +27,29 @@ if __name__ == '__main__':
     x = torch.tensor(img).float()
     x = x.view(-1, 1, 576, 576).to(device)
 
+    # net.eval()
     out = net(x)
+    print(out.shape)
+    print(torch.maximum(out))
+    exit()
+    pred = torch.sigmoid(out).cpu().detach().numpy().reshape(576, 576)
+    print(pred)
+    pred[pred >= 0.5] = 1
+    pred[pred < 0.5] = 0
+    print(pred)
+    TP = ((pred == 1) & (mask == 1)).sum()
+    TN = ((pred == 0) & (mask == 0)).sum()
+    FN = ((pred == 0) & (mask == 1)).sum()
+    FP = ((pred == 1) & (mask == 0)).sum()
+    acc = (TP + TN) / (TP + TN + FP + FN)
+    print(TP)
+    print(FN)
+    print(FP)
+    print(TN)
+    print(acc)
+
     out_mask = out.cpu().detach().numpy().reshape(576, 576)
-    cv2.imshow('out', np.hstack([mask, out_mask]))
+    cv2.imshow('out', pred)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 

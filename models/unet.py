@@ -104,7 +104,7 @@ class UNet(nn.Module):
         y8 = self.up3(y7, y2)
         y9 = self.up4(y8, y1)
 
-        output = self.outconv(y9)
+        output = torch.sigmoid(self.outconv(y9))
 
         return output
 

@@ -5,7 +5,7 @@
 
 import torch
 from torch import nn
-from torchvision import models
+import torchvision
 
 from functools import partial
 
@@ -69,7 +69,7 @@ class DinkNet34(nn.Module):
         super(DinkNet34, self).__init__()
 
         filters = [64, 128, 256, 512]
-        resnet = models.resnet34(pretrained=True)
+        resnet = torchvision.models.resnet34(pretrained=True)
         self.firstconv = resnet.conv1
         self.firstbn = resnet.bn1
         self.firstrelu = resnet.relu
@@ -122,7 +122,7 @@ class DinkNet34(nn.Module):
 
 
 if __name__ == '__main__':
-    img = torch.ones([2, 3, 1024, 1024]).cuda()
+    img = torch.ones([8, 3, 512, 512]).cuda()
     model = DinkNet34().cuda()
     out = model(img)
     print(out.shape)
