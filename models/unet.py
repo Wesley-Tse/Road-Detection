@@ -110,7 +110,7 @@ class UNet(nn.Module):
 
 
 if __name__ == '__main__':
-    net = UNet(1, 1).cuda()
-    img = torch.ones([1, 1, 512, 512]).cuda()
+    net = UNet(3, 1).cuda()
+    img = torch.ones([110, 3, 64, 64]).cuda()
     out = net(img)
     print(out.shape)
