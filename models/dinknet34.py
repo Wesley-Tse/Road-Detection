@@ -6,8 +6,8 @@
 import torch
 from torch import nn
 import torchvision
-
 from functools import partial
+from models.attention import PAMBlock, CAMBlock
 
 nonlinearity = partial(nn.ReLU(inplace=True))
 
@@ -80,12 +80,13 @@ class DinkNet34(nn.Module):
         self.encoder4 = resnet.layer4
 
         self.dblock = Dblock(512)
-
         self.decoder4 = DecoderBlock(filters[3], filters[2])
         self.decoder3 = DecoderBlock(filters[2], filters[1])
         self.decoder2 = DecoderBlock(filters[1], filters[0])
         self.decoder1 = DecoderBlock(filters[0], filters[0])
 
+        self.cam = CAMBlock(512)
+        self.pam = PAMBlock(512)
         self.finaldeconv1 = nn.ConvTranspose2d(filters[0], 32, 4, 2, 1)
         self.finalrelu1 = nonlinearity
         self.finalconv2 = nn.Conv2d(32, 32, 3, padding=1)
@@ -98,6 +99,7 @@ class DinkNet34(nn.Module):
         x = self.firstbn(x)
         x = self.firstrelu(x)
         x = self.firstmaxpool(x)
+
         e1 = self.encoder1(x)
         e2 = self.encoder2(e1)
         e3 = self.encoder3(e2)
@@ -105,9 +107,11 @@ class DinkNet34(nn.Module):
 
         # Center
         e4 = self.dblock(e4)
+        cam = self.cam(e4)
+        pam = self.pam(cam)
 
         # Decoder
-        d4 = self.decoder4(e4) + e3
+        d4 = self.decoder4(pam) + e3
         d3 = self.decoder3(d4) + e2
         d2 = self.decoder2(d3) + e1
         d1 = self.decoder1(d2)
@@ -122,7 +126,7 @@ class DinkNet34(nn.Module):
 
 
 if __name__ == '__main__':
-    img = torch.ones([8, 3, 512, 512]).cuda()
+    img = torch.ones([2, 3, 1024, 1024]).cuda()
     model = DinkNet34().cuda()
     out = model(img)
     print(out.shape)
