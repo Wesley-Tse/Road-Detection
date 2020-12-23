@@ -16,8 +16,8 @@ net = UNet(1, 1).to(device)
 weight = r'E:\PyCharmProject\Road-Detection\weights\weight.pt'
 if os.path.exists(weight):
     net.load_state_dict(torch.load(weight))
-img_path = 'data/1_sat.jpg'
-mask_path = 'data/1_mask.png'
+img_path = 'src/img/1_sat.jpg'
+mask_path = 'src/img/1_mask.png'
 
 if __name__ == '__main__':
 

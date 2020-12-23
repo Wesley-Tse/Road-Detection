@@ -22,7 +22,7 @@ __all__ = ['DistSyncBatchNorm', 'SyncBatchNorm', 'BatchNorm1d', 'BatchNorm2d', '
 
 class DistSyncBatchNorm(_BatchNorm):
     r"""Cross-GPU Synchronized Batch normalization (SyncBN)
-    Standard BN [1]_ implementation only normalize the data within each device (GPU).
+    Standard BN [1]_ implementation only normalize the src within each device (GPU).
     SyncBN normalizes the input within the whole mini-batch.
     We follow the sync-onece implmentation described in the paper [2]_ .
     Please see the design idea in the `notes <./notes/syncbn.html>`_.
@@ -91,7 +91,7 @@ class DistSyncBatchNorm(_BatchNorm):
 
 class SyncBatchNorm(_BatchNorm):
     r"""Cross-GPU Synchronized Batch normalization (SyncBN)
-    Standard BN [1]_ implementation only normalize the data within each device (GPU).
+    Standard BN [1]_ implementation only normalize the src within each device (GPU).
     SyncBN normalizes the input within the whole mini-batch.
     We follow the sync-onece implmentation described in the paper [2]_ .
     Please see the design idea in the `notes <./notes/syncbn.html>`_.

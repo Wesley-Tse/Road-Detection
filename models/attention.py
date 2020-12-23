@@ -138,7 +138,7 @@ class Head(nn.Module):
         output = [sasc_output]
         output.append(sa_output)
         output.append(sc_output)
-        return tuple(output)  # 输出模块融合后的结果，以及两个模块各自的结果
+        return sa_output  # 输出模块融合后的结果，以及两个模块各自的结果
 
 if __name__ == '__main__':
     x = torch.ones([2, 512, 64, 64]).cuda()
