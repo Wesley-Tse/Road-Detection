@@ -8,40 +8,65 @@ import os
 from matplotlib import pyplot as plt
 import numpy as np
 
-# path = './src/log'
-path = r'E:\PyCharmProject\Road-Detection\src\log\U_Net24k.txt'
 
-log = []
-with open(path, 'r') as f:
-    next(f)
-    lines = f.readlines()
-    for line in lines:
-        log.append(list(map(float, line.split('\t'))))
-log = np.stack(log)
+def get_info(path):
+    if not os.path.exists(path):
+        print('error: ' + path + ' not exists')
+        exit()
+    files = os.listdir(path)
 
-epoch = log[..., :1].astype(int)
-loss = log[..., 1:2]
-pa = log[..., 2:3]
-iou = log[..., 3:4]
-precision = log[..., 4:]
+    with open(os.path.join(path, files[0])) as f:
+        label = f.readline().strip().split('\t')[1:]
 
-x = [i for item in epoch for i in item]
-y1 = [i for item in log[..., 1:2] for i in item]
-y2 = [i for item in log[..., 2:3] for i in item]
-y3 = [i for item in log[..., 3:4] for i in item]
-y4 = [i for item in log[..., 4:] for i in item]
+    logs = []
+    a = {}
+    for file in files:
+        # a.update({file: np.loadtxt(os.path.join(path, file), skiprows=1)})
+        logs.append(np.loadtxt(os.path.join(path, file), skiprows=1))
 
-plt.figure()
-plt.plot(x, y1)
-plt.plot(x, y2)
-plt.plot(x, y3)
-plt.plot(x, y4)
-plt.title('net')
-plt.xlabel('epoch')
-plt.ylabel('loss')
-plt.plot(x, y1, label='loss')
-plt.plot(x, y2, label='pa')
-plt.plot(x, y3, label='iou')
-plt.plot(x, y4, label='precision')
-plt.legend(loc="upper left")
-plt.show()
+    epoch = []
+    loss = []
+    pa = []
+    iou = []
+    precision = []
+    for log in logs:
+        epoch.append(log[..., :1])
+        loss.append(log[..., 1:2])
+        pa.append(log[..., 2:3])
+        iou.append(log[..., 3:4])
+        precision.append(log[..., 4:])
+
+    return epoch, loss, pa, iou, precision, label, files
+
+def get_list(list1):
+    list1 = [i for item in list1 for i in item]
+    return list(map(float, list1))
+
+def draw(xs, ys, label, name, loc, save):
+
+    global get_list, max
+    plt.figure()
+    plt.title('epoch - ' + label)
+    plt.xlabel('epoch')
+    plt.ylabel(label)
+    for i in range(len(name)):
+        x = get_list(xs[i])
+        y = get_list(ys[i])
+        # if label != 'loss':
+        #     plt.text(110, 0.5 - i * 0.03, str(round(max(y), 3)))
+        plt.plot(x, y, label=name[i].split('24k')[0])
+    plt.legend(loc=loc)
+    # plt.savefig(os.path.join(save, label))
+    plt.show()
+
+
+if __name__ == '__main__':
+    path = './src/log'
+    save = './src/eval'
+    if not os.path.exists(save):
+        os.mkdir(save)
+    epoch, loss, pa, iou, precision, label, name = get_info(path)
+    draw(epoch, loss, label[0], name, 'upper right', save)
+    draw(epoch, pa, label[1], name, 'lower right', save)
+    draw(epoch, iou, label[2], name, 'lower right', save)
+    draw(epoch, precision, label[3], name, 'lower right', save)
